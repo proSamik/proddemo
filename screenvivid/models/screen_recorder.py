@@ -244,7 +244,7 @@ class ScreenRecordingThread:
                 while not self._is_stopped.is_set():
                     current_time = time.time()
 
-                    # Đợi đến thời điểm chính xác để capture frame tiếp theo
+                    # Wait until the exact time to capture the next frame
                     if current_time < next_frame_time:
                         time.sleep(max(0, next_frame_time - current_time))
                         continue
@@ -265,7 +265,7 @@ class ScreenRecordingThread:
                             logger.debug(f"ICC profile file: {self._icc_profile}")
                         icc_profile_check_tries += 1
 
-                    # Lưu timestamp của frame
+                    # Save frame timestamp
                     frame_time = time.time()
                     self._image_queue.put((screenshot_bytes, frame_time))
                     self._frame_index_queue.put(self._frame_index)
@@ -273,12 +273,13 @@ class ScreenRecordingThread:
                     self._frame_index += 1
                     self._update_fps("capture")
 
-                    # Tính thời điểm cần capture frame tiếp theo
+                    # Calculate the time for the next frame capture
                     next_frame_time += target_interval
 
-                    # Reset nếu bị lag quá nhiều
+                    # Reset if lagging too much
                     if time.time() > next_frame_time + target_interval:
                         next_frame_time = time.time() + target_interval
+                        logger.debug("Screen capture is lagging, resetting timing")
 
         except Exception as e:
             logger.error(f"Screen capture error: {e}")
