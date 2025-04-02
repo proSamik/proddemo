@@ -368,7 +368,7 @@ class VideoControllerModel(QObject):
         # Parameters for automatic zoom generation
         MIN_FRAMES_BETWEEN_ZOOMS = self.fps * 2  # At least 2 seconds between zoom effects
         ZOOM_DURATION_FRAMES = self.fps * 4      # Each zoom lasts 4 seconds
-        DEFAULT_ZOOM_SCALE = 2.0                 # Default zoom level
+        DEFAULT_ZOOM_SCALE = 1.5                 # Default zoom level
         
         click_events = []
         
