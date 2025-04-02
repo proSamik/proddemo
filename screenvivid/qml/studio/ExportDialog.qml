@@ -94,16 +94,16 @@ Dialog {
     }
 
     function updateOutputSize() {
-        var aspectRatio = videoController.aspect_ratio ? videoController.aspect_ratio : "auto";
+        var aspectRatio = videoController && videoController.aspect_ratio ? videoController.aspect_ratio : "auto";
 
         if (aspectRatio === "auto") {
-            outputSize = videoController.output_size
-            aspectRatio = resolutionToAspectRatio(outputSize[0], outputSize[1])
+            outputSize = videoController && videoController.output_size ? videoController.output_size : [1920, 1080];
+            aspectRatio = resolutionToAspectRatio(outputSize[0], outputSize[1]);
         }
 
         var size = sizeMap[currentSize] && sizeMap[currentSize][aspectRatio];
         if (size) {
-            outputSize = size
+            outputSize = size;
         }
     }
 
@@ -136,6 +136,7 @@ Dialog {
 
     Connections {
         target: videoController
+        enabled: videoController !== null
         function onAspectRatioChanged() { updateOutputSize() }
     }
 

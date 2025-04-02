@@ -308,8 +308,8 @@ Item {
                             color: "#7BD57F"
                             Layout.fillWidth: true
                             
-                            property int startSeconds: Math.floor(videoController.absolute_current_frame / videoController.fps)
-                            property int endSeconds: startSeconds + durationSeconds.value
+                            property int startSeconds: videoController ? Math.floor(videoController.absolute_current_frame / (videoController.fps || 1)) : 0
+                            property int endSeconds: videoController ? startSeconds + durationSeconds.value : 0
                             
                             text: formatTime(startSeconds) + " - " + formatTime(endSeconds)
                             
@@ -613,6 +613,7 @@ Item {
 
         Connections {
             target: videoController
+            enabled: videoController !== null
             function onCurrentFrameChanged(currentFrame) {
                 var progress = 100.0 * currentFrame / (videoController.end_frame - videoController.start_frame)
                 fullScreenTimeSlider.value = progress
@@ -637,6 +638,7 @@ Item {
 
     Connections {
         target: videoController
+        enabled: videoController !== null
         function onFrameReady(frame) {
             videoPreview.source = "image://frames/frame?" + Date.now()
         }
@@ -649,7 +651,9 @@ Item {
         
         try {
             // Use a direct call to get the current cursor position
-            videoController.get_cursor_position_for_zoom()
+            if (videoController) {
+                videoController.get_cursor_position_for_zoom()
+            }
             
             // The cursor position will be set in a callback when 
             // videoController.cursorPositionReady is emitted
@@ -660,6 +664,7 @@ Item {
     
     Connections {
         target: videoController
+        enabled: videoController !== null
         function onCursorPositionReady(normalizedX, normalizedY) {
             if (zoomActive) {
                 // Set the zoom center to the cursor position

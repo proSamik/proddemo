@@ -162,7 +162,8 @@ Rectangle {
                 
                 // Zoom effects renderer
                 Repeater {
-                    model: videoController.zoom_effects
+                    id: zoomEffectRepeater
+                    model: videoController ? videoController.zoom_effects : []
                     
                     delegate: Rectangle {
                         id: zoomEffectRect
@@ -591,6 +592,7 @@ Rectangle {
 
     Connections {
         target: videoController
+        enabled: videoController !== null
         function onPlayingChanged(playing) {
             if (!playing) {
                 animationEnabled = true
@@ -598,17 +600,8 @@ Rectangle {
         }
         
         function onZoomEffectsChanged() {
-            // The Repeater should automatically update when the model changes
-            // This is just to make sure it's working
-            console.log("Zoom effects changed, count:", videoController.zoom_effects.length)
-            for (var i = 0; i < videoController.zoom_effects.length; i++) {
-                var effect = videoController.zoom_effects[i]
-                console.log("  Zoom effect " + i + ":", effect.start_frame, "-", effect.end_frame,
-                           ", scale:", effect.params.scale)
-            }
-            
-            zoomTrack.visible = false
-            zoomTrack.visible = true
+            // When zoom effects change, update the repeater model
+            zoomEffectRepeater.model = videoController ? videoController.zoom_effects : []
         }
     }
 }

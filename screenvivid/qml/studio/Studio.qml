@@ -90,6 +90,7 @@ Window {
     // Video controller connections
     Connections {
         target: videoController
+        enabled: videoController !== null
         function onPlayingChanged(playing) {
             isPlaying = playing
         }
@@ -158,11 +159,13 @@ Window {
 
     // Initialization
     Component.onCompleted: {
-        fps = videoController.fps
-        totalFrames = videoController.total_frames
-        videoLen = videoController.video_len
-        videoController.get_current_frame()
-        videoController.aspect_ratio = "auto"
+        if (videoController) {
+            fps = videoController.fps || 30
+            totalFrames = videoController.total_frames || 0
+            videoLen = videoController.video_len || 0
+            videoController.get_current_frame()
+            videoController.aspect_ratio = "auto"
+        }
     }
 
     // Cleanup
